@@ -7,7 +7,11 @@ db = connection['tutorial']
 # Set to numbers for testing locally
 collection = db['numbers']
 
-
+'''3 insert operations exist:
+    insert_one - inserts one document
+    insert_many - inserts multiple documents
+    insert - insert single document or array
+'''
 def insert_doc():
     try:
         id_num = input('Enter ID: ')
@@ -15,28 +19,40 @@ def insert_doc():
         db.collection.insert(
             {
                 "id": id_num,
-                "name": name
+                "name": name,
             }
         )
         print("Insert was successful \n")
     except Exception as e:
         print("400", str(e))
+    return print(True)
 
 
 insert_doc()
 
 
-def read_doc():
+# Reads all the documents in the collection
+def read_all_docs():
     try:
         print("Reading all data in Database: \n")
-        read = collection.find()
-        for doc in read:
+        read_all = collection.find()
+        for doc in read_all:
             print(doc)
     except Exception as e:
         print("400", str(e))
 
 
-read_doc()
+# This should take as input a key value pair and find it
+def read_one_doc():
+    try:
+        input_id = input("Enter the ID to look up: ")
+        read_one = collection.find({"id": input_id})
+        return read_one
+    except Exception as e:
+        print("400", str(e))
+
+
+read_one_doc()
 
 
 def update_doc():
