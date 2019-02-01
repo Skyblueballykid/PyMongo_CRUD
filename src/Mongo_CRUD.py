@@ -1,7 +1,5 @@
-import pymongo
 from pymongo import MongoClient
-import json
-from bson import json_util
+
 
 
 # Establish the connection to the MongoClient
@@ -11,23 +9,42 @@ db = connection['tutorial']
 # Set to numbers for testing locally
 collection = db['numbers']
 
-
 print(collection)
 
 
+def insert():
+    try:
+        id = input('Enter ID:')
+    except IOError as ioe:
+        print("400", str(ioe))
+    return id
+
+
+insert()
+
+
 def insert_doc(document):
-	try:
-		insert = collection.save(document)
-	except ValidationError as ve:
-		abort(400, str(ve))
-	return insert
+    try:
+        inserted_doc = collection.save(document)
+    except ValueError as ve:
+        print("400", str(ve))
+    return insert_doc
+
 
 def read_doc():
-	try:
-		read = collection.find()
-		for doc in read:
-			print(doc)
-	except ValidationError as ve:
-		abort(400, str(ve))
-	return read
+    try:
+        print("Reading all data in Database: \n")
+        read = collection.find()
+        for doc in read:
+            print(doc)
+    except ValueError as ve:
+        print("400", str(ve))
+    return read
 
+
+def update_doc():
+    return
+
+
+def delete_doc():
+    return
