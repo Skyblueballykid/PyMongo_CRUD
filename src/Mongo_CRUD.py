@@ -1,4 +1,5 @@
 from pymongo import MongoClient
+from pprint import pprint
 
 # Establish the connection to the MongoClient
 connection = MongoClient('localhost', 27017)
@@ -7,16 +8,20 @@ db = connection['tutorial']
 # Set to numbers for testing locally
 collection = db['numbers']
 
-'''3 insert operations exist:
+
+'''
+3 insert operations exist:
     insert_one - inserts one document
     insert_many - inserts multiple documents
     insert - insert single document or array
 '''
+
+
 def insert_doc():
     try:
         id_num = input('Enter ID: ')
         name = input('Enter name: ')
-        db.collection.insert(
+        db.collection.insert_one(
             {
                 "id": id_num,
                 "name": name,
@@ -30,6 +35,12 @@ def insert_doc():
 
 insert_doc()
 
+'''
+2 read operations exist:
+    find() - finds all documents
+    find_one() - finds one document
+'''
+
 
 # Reads all the documents in the collection
 def read_all_docs():
@@ -42,12 +53,12 @@ def read_all_docs():
         print("400", str(e))
 
 
-# This should take as input a key value pair and find it
+# This function takes as input a key value pair and return one document
 def read_one_doc():
     try:
-        input_id = input("Enter the ID to look up: ")
-        read_one = collection.find({"id": input_id})
-        return read_one
+        input_name = input("Enter the name to look up: ")
+        read_one = collection.find_one({"name": input_name})
+        return print(read_one)
     except Exception as e:
         print("400", str(e))
 
@@ -55,6 +66,16 @@ def read_one_doc():
 read_one_doc()
 
 
+'''
+4 update operations exist:
+    update()
+    update_one()
+    update_many()
+    replace_one()
+'''
+
+
+# This function updates a document
 def update_doc():
     try:
         update_id = input("Select ID Number: \n")
@@ -71,9 +92,15 @@ def update_doc():
     except Exception as e:
         print("400", str(e))
 
+'''
+2 delete operations exist:
+    delete_one()
+    delete_many()
+Both methods return a DeleteResult object
+'''
 
-update_doc()
 
-
+# This function deletes a document
 def delete_doc():
+    
     pass
