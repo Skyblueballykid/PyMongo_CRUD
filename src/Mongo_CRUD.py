@@ -10,12 +10,15 @@ collection = db['numbers']
 
 def insert_doc():
     try:
-        id_num = input('Enter ID:')
-        db.numbers.insert_one(
+        id_num = input('Enter ID: ')
+        name = input('Enter name: ')
+        db.collection.insert(
             {
-                "id": id_num
+                "id": id_num,
+                "name": name
             }
         )
+        print("Insert was successful \n")
     except Exception as e:
         print("400", str(e))
 
@@ -37,7 +40,23 @@ read_doc()
 
 
 def update_doc():
-    pass
+    try:
+        update_id = input("Select ID Number: \n")
+        update_name = input("Enter name to update: \n")
+        db.collection.update_one(
+            {"id": update_id},
+            {
+                "$set": {
+                    "name": update_name
+                }
+            }
+
+        )
+    except Exception as e:
+        print("400", str(e))
+
+
+update_doc()
 
 
 def delete_doc():
