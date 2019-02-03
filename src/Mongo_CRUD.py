@@ -31,7 +31,7 @@ def insert_doc():
         print(result.inserted_id, '\n', True)
 
     except Exception as e:
-        print("400", str(e))
+        print("400", str(e), False)
 
 
 '''
@@ -52,7 +52,7 @@ def read_all_docs():
             print(doc)
 
     except Exception as e:
-        print("400", str(e))
+        print("400", str(e), False)
 
 
 # This function takes as input a key-value pair and returns one document
@@ -65,7 +65,7 @@ def read_one_doc():
         return print(read_one)
 
     except Exception as e:
-        print("400", str(e))
+        print("400", str(e), False)
 
 
 '''
@@ -98,7 +98,7 @@ def update_doc():
         print("Document Updated: ", True)
 
     except Exception as e:
-        print("400", str(e))
+        print("400", str(e), False)
 
 
 '''
@@ -122,7 +122,7 @@ def delete_doc():
 
         print("Document Deleted:", True)
     except Exception as e:
-        print("400", str(e))
+        print("400", str(e), False)
 
 
 # Create the selection menu
