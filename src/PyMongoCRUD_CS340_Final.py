@@ -3,11 +3,10 @@ from pymongo import MongoClient
 
 # Establish the connection to the MongoClient
 connection = MongoClient('localhost', 27017)
-# Set to tutorial for testing locally
-db = connection['tutorial']
-# Set to numbers for testing locally
-collection = db['numbers']
-
+# Set to city DB
+db = connection['city']
+# Set to inspections collection
+collection = db['inspections']
 
 '''
 3 insert operations exist:
@@ -24,12 +23,14 @@ def insert_doc():
 
         insertion_doc = {
             "id": id_num,
-            "name": name
+            "business_name": name
         }
 
-        result = db.collection.insert_one(insertion_doc)
+        result = db.inspections.insert_one(insertion_doc)
 
         print(result.inserted_id, '\n', True)
+
+        return (result)
 
     except Exception as e:
         print("400", str(e), False)
@@ -47,7 +48,7 @@ def read_all_docs():
     try:
         print("Reading all data in Database: \n")
 
-        read_all = collection.find()
+        read_all = db.inspections.find()
 
         for doc in read_all:
             print(doc)
@@ -61,9 +62,9 @@ def read_one_doc():
     try:
         input_name = str(input("Enter the name to look up: "))
 
-        read_one = db.collection.find_one({"name": input_name})
+        read_one = db.inspections.find_one({"business_name": input_name})
 
-        return print(read_one)
+        print(read_one)
         # TODO: Pretty print
 
     except Exception as e:
@@ -80,19 +81,18 @@ def read_one_doc():
 
 
 # This function updates a document
-#TODO: Need to improve this function
 def update_doc():
     try:
         update_id = input("Select ID Number: \n")
 
-        update_name = input("Enter name to update: \n")
+        update_name = input("Enter name to update to: \n")
 
-        db.collection.update_one(
+        db.inspections.update_one(
 
             {"id": update_id},
             {
                 "$set": {
-                    "name": update_name
+                    "business_name": update_name
                 }
             }
         )
@@ -117,10 +117,10 @@ def delete_doc():
         delete_name = input("Enter the name of the document to delete: ")
 
         deletion = {
-            "name": delete_name
+            "business_name": delete_name
         }
 
-        db.collection.delete_one(deletion)
+        db.inspections.delete_one(deletion)
 
         print("Document Deleted:", True)
     except Exception as e:
@@ -130,14 +130,14 @@ def delete_doc():
 # Create the selection menu
 def main():
     while True:
-        selection = input(
+        selection = str(input(
             'Select: '
             '\n1 to insert a document '
             '\n2 to read one document '
             '\n3 to read all documents'
             '\n4 to update a document '
             '\n5 to delete a document '
-            '\n0 to quit\n\n')
+            '\n0 to quit\n\n'))
 
         if selection == '1':
             insert_doc()
@@ -155,4 +155,5 @@ def main():
             print('\n Selection is Invalid \n')
 
 
-main()
+if __name__ == "__main__":
+    main()
