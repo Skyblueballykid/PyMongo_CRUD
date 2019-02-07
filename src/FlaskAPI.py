@@ -5,11 +5,12 @@ from flask_api import FlaskAPI
 
 app = FlaskAPI(__name__)
 
+hello1 = { 1: "world"}
 
 # Use jsonify to return {hello:"world"}
 @app.route("/", methods=['GET'])
 def hello():
-    return {'hello': 'world'}
+    return {'hello':'world'}
 
 # 1.a. Create a basic web service using the RESTful design pattern to implement the following URIs: \
 #  http://localhost/hello?name=”world”
@@ -19,6 +20,13 @@ def hello():
 # 1.b. HTTP POST the JSON data: {string1:”hello”, string2:”world”} to http://localhost/strings \
 # The above URI should return the following JSON-format text:
 # { first: “hello”, second: “world” }
+
+hello2 = { 1: "hello", 2: "world" }
+
+
+@app.route("/", methods = ['POST'])
+def hello_post():
+    return hello2
 
 
 # 2. Using the RESTful web service you created in Step 1, add URI paths to the RESTful service \
