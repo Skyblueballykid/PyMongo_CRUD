@@ -3,7 +3,7 @@ import json
 # from src.Mongo_CRUD import *
 from flask import Flask, jsonify
 
-app = Flask(__name__)
+FlaskREST = Flask(__name__)
 
 
 # Use jsonify to return {hello:"world"}
@@ -13,4 +13,10 @@ def hello():
 
 
 if __name__ == "__main__":
-    app.run()
+    FlaskREST.run()
+
+'''
+command line run:
+export FLASK_APP=app.py
+Flask run
+'''
