@@ -117,6 +117,7 @@ curl http://localhost:8080/read?business_name="ACME TEST INC."
 /read
 '''
 
+# Read all
 @app2.route("/reads", methods=['GET'])
 def read_all():
 
@@ -129,14 +130,20 @@ def read_all():
     except Exception as e:
         print("400", str(e), False)
 
-@app2.route("/read/<business_name>", methods=['GET'])
+
+# Read one
+@app2.route("/read", methods=['GET', 'POST'])
 def read():
 
     inspections = mongo.db.inspections
 
+    business_name = request.json['business_name']
+
     try:
 
-        read_one = inspections.find({"business_name": inspections['business_name']})
+        query = {"business_name": business_name}
+
+        read_one = inspections.find_one(query)
         output = {"business_name": read_one['business_name']}
 
         return jsonify({'business-name': output})
