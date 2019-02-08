@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_pymongo import PyMongo
+from bson.json_util import dumps
 
 app2 = Flask(__name__)
 
@@ -33,14 +34,29 @@ def get():
 strings = {}
 
 '''
-class Strings(Resource):
     def get(self, string_id):
         return {string_id: strings[string_id]}
-
-    def put(self, string_id):
-        strings = request.form['data']
-        return {string_id: strings[string_id]}
 '''
+
+
+@app2.route("/strings", methods=['POST'])
+def add_string():
+    inspections = mongo.db.inspections
+
+    try:
+
+        string1 = request.json['string1']
+        string2 = request.json['string2']
+
+        inspect_result = inspections.insert({"string1": string1, "string2": string2})
+        return_result = inspections.find_one({"_id": inspect_result})
+
+        output = {'first': return_result['string1'], 'second': return_result['string2']}
+
+        return jsonify({'result': output})
+
+    except Exception as e:
+        print("400", str(e), False)
 
 # 2. Using the RESTful web service you created in Step 1, add URI paths to the RESTful service \
 # for each of your CRUD functions completed in Milestone One. Your URI paths should be able to \
@@ -60,20 +76,35 @@ http://localhost:8080/create
 @app2.route("/create", methods=['POST'])
 def create():
     inspections = mongo.db.inspections
+
     try:
-        id_num = input('Enter ID: ')
-        name = input('Enter name: ')
 
-        insertion_doc = {
-            "id": id_num,
-            "business_name": name
-        }
+        company_id = request.json['id']
+        certificate_number = request.json['certificate_number']
+        business_name = request.json['business_name']
+        date = request.json['date']
+        result = request.json['result']
+        sector = request.json['sector']
 
-        result = inspections.insert_one(insertion_doc)
+        result = inspections.insert({
+            "id": company_id,
+            "certificate_number": certificate_number,
+            "business_name": business_name,
+            "date": date,
+            "result": result,
+            "sector": sector
+        })
 
-        print(result.inserted_id, '\n', True)
+        return_result = inspections.find_one({"_id": result})
 
-        return jsonify(result)
+        output = {'id': return_result['id'],
+                  'certificate_number': return_result['certificate_number'],
+                  'business_name': return_result['business_name'],
+                  'date': return_result['date'],
+                  'result': return_result['result'],
+                  'sector': return_result['sector']}
+
+        return jsonify({'result': output})
 
     except Exception as e:
         print("400", str(e), False)
@@ -86,14 +117,29 @@ curl http://localhost:8080/read?business_name="ACME TEST INC."
 /read
 '''
 
+@app2.route("/reads", methods=['GET'])
+def read_all():
 
-@app2.route("/read", methods=['GET'])
-def read(business_name):
     inspections = mongo.db.inspections
-    try:
-        read_one = inspections.find({"business_name": business_name})
 
-        return jsonify(read_one)
+    try:
+        all_inspect = inspections.find()
+        return dumps(all_inspect)
+
+    except Exception as e:
+        print("400", str(e), False)
+
+@app2.route("/read/<business_name>", methods=['GET'])
+def read():
+
+    inspections = mongo.db.inspections
+
+    try:
+
+        read_one = inspections.find({"business_name": inspections['business_name']})
+        output = {"business_name": read_one['business_name']}
+
+        return jsonify({'business-name': output})
 
     except Exception as e:
         print("400", str(e), False)
@@ -158,4 +204,4 @@ def delete():
 
 
 if __name__ == "__main__":
-    app2.run(host='localhost', port='8080', debug=True)
+    app2.run(host='localhost', port='8080')
