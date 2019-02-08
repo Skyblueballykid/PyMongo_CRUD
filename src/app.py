@@ -5,7 +5,6 @@ from pymongo import MongoClient
 # Allows for curl like functionality from python interpreter
 from requests import get, put
 
-from src.Mongo_CRUD import *
 
 app = Flask(__name__)
 api = Api(app)
@@ -47,7 +46,7 @@ class Strings(Resource):
         return {string_id: strings[string_id]}
 
     def put(self, string_id):
-        strings[string_id] = request.form['data']
+        strings = request.form['data']
         return {string_id: strings[string_id]}
 
 
@@ -68,17 +67,78 @@ curl -H "Content-Type: application/json" -X POST -d ' \
 http://localhost:8080/create
 
 /create
+'''
 
+
+class Create(Resource):
+    def post(self):
+        try:
+            id_num = input('Enter ID: ')
+            name = input('Enter name: ')
+
+            insertion_doc = {
+                "id": id_num,
+                "name": name
+            }
+
+            result = db.collection.insert_one(insertion_doc)
+
+            print(result.inserted_id, '\n', True)
+
+        except Exception as e:
+            print("400", str(e), False)
+
+
+
+'''
 "Return the document found with the given business_name"
 curl http://localhost:8080/read?business_name="ACME TEST INC."
 
 /read
+'''
 
+class Read(Resource):
+    def get(self):
+        try:
+            input_name = str(input("Enter the name to look up: "))
+
+            read_one = db.collection.find_one({"name": input_name})
+
+            return print(read_one)
+
+        except Exception as e:
+            print("400", str(e), False)
+
+'''
 "Update the result value for the document with the given id string"
 curl http://localhost:8080/update?id="10011-2017-TEST"&result="Violation Issued"
 
 /update
+'''
 
+class Update(Resource):
+    def put(self):
+        try:
+            update_id = input("Select ID Number: \n")
+
+            update_name = input("Enter name to update: \n")
+
+            db.collection.update_one(
+
+                {"id": update_id},
+                {
+                    "$set": {
+                        "name": update_name
+                    }
+                }
+            )
+
+            print("Document Updated: ", True)
+
+        except Exception as e:
+            print("400", str(e), False)
+
+'''
 "Delete the document with the given id string"
 curl http://localhost:8080/delete?id="10011-2017-TEST"
 
@@ -86,17 +146,31 @@ curl http://localhost:8080/delete?id="10011-2017-TEST"
 
 '''
 
+
+class Delete(Resource):
+    def delete(self):
+        try:
+            delete_name = input("Enter the name of the document to delete: ")
+
+            deletion = {
+                "name": delete_name
+            }
+
+            db.collection.delete_one(deletion)
+
+            print("Document Deleted:", True)
+        except Exception as e:
+            print("400", str(e), False)
+
+
 # Support for multiple endpoints
 api.add_resource(Hello, '/', '/hello')
-
 api.add_resource(Strings, '/<string:string_id>')
+api.add_resource(Create, '/create')
+api.add_resource(Read, '/read')
+api.add_resource(Update, '/update')
+api.add_resource(Delete, '/delete')
 
-'''
-api.add_resource(Create, '/Create')
-api.add_resource(Read, '/Read')
-api.add_resource(Update, '/Update')
-api.add_resource(Delete, '/Delete')
-'''
 
 if __name__ == "__main__":
     app.run(host='localhost', port='8080', debug=True)
