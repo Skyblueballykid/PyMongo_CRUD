@@ -128,7 +128,6 @@ def delete_doc():
 
 
 # Create the selection menu
-if __name__ == "__main__":
     def main():
         while True:
             selection = input(
@@ -154,4 +153,6 @@ if __name__ == "__main__":
                 quit()
             else:
                 print('\n Selection is Invalid \n')
+
+if __name__ == "__main__":
     main()
