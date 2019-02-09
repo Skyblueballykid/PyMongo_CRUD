@@ -86,7 +86,7 @@ def create():
         result = request.json['result']
         sector = request.json['sector']
 
-        result = inspections.insert({
+        company = inspections.insert({
             "id": company_id,
             "certificate_number": certificate_number,
             "business_name": business_name,
@@ -95,7 +95,7 @@ def create():
             "sector": sector
         })
 
-        return_result = inspections.find_one({"_id": result})
+        return_result = inspections.find_one({"_id": company})
 
         output = {'id': return_result['id'],
                   'certificate_number': return_result['certificate_number'],
@@ -117,6 +117,8 @@ curl http://localhost:8080/read?business_name="ACME TEST INC."
 /read
 '''
 
+
+# Read all
 @app2.route("/reads", methods=['GET'])
 def read_all():
 
@@ -129,17 +131,23 @@ def read_all():
     except Exception as e:
         print("400", str(e), False)
 
-@app2.route("/read/<business_name>", methods=['GET'])
+
+# Read one
+@app2.route("/read", methods=['GET', 'POST'])
 def read():
 
     inspections = mongo.db.inspections
 
+    business_name = request.json['business_name']
+
     try:
 
-        read_one = inspections.find({"business_name": inspections['business_name']})
+        query = {"business_name": business_name}
+
+        read_one = inspections.find_one(query)
         output = {"business_name": read_one['business_name']}
 
-        return jsonify({'business-name': output})
+        return jsonify({'result': output})
 
     except Exception as e:
         print("400", str(e), False)
@@ -155,23 +163,29 @@ curl http://localhost:8080/update?id="10011-2017-TEST"&result="Violation Issued"
 
 @app2.route("/update", methods=['PUT'])
 def update():
-    inspections = mongo.db.inspections
-    try:
-        update_id = input("Select ID Number: \n")
 
-        update_name = input("Enter name to update to: \n")
+    inspections = mongo.db.inspections
+
+    try:
+        update_id = request.json["id"]
+
+        result = request.json["result"]
 
         inspections.update_one(
 
             {"id": update_id},
             {
                 "$set": {
-                    "business_name": update_name
+                    "result": result
                 }
             }
         )
 
-        print("Document Updated: ", True)
+        return_result = inspections.find_one({'id': update_id})
+
+        output = {"result": return_result['result']}
+
+        return jsonify({'result': output})
 
     except Exception as e:
         print("400", str(e), False)
@@ -188,17 +202,16 @@ curl http://localhost:8080/delete?id="10011-2017-TEST"
 
 @app2.route("/delete", methods=['DELETE'])
 def delete():
+
     inspections = mongo.db.inspections
     try:
-        delete_name = input("Enter the name of the document to delete: ")
 
-        deletion = {
-            "business_name": delete_name
-        }
+        delete_id = request.json['id']
 
-        inspections.delete_one(deletion)
+        inspections.remove({"id": delete_id})
 
-        print("Document Deleted:", True)
+        return "", 200
+
     except Exception as e:
         print("400", str(e), False)
 
