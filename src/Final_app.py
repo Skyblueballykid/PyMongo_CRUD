@@ -27,7 +27,7 @@ def insert_doc(document):
 
 
 @route('/create', method='POST')
-def put_document():
+def put_doc():
     data = request.body.readline()
     if not data:
         abort(400, 'No data received')
@@ -39,6 +39,24 @@ def put_document():
         print(200, "Successfully inserted document.")
     except Exception as e:
         abort(400, str(e))
+
+
+# Read (Find one)
+@route('/Read', method='GET')
+def read_doc():
+    pass
+
+
+# Update
+@route('/Update', method='PUT')
+def update_doc():
+    pass
+
+
+# Delete
+@route('/Delete', method='DELETE')
+def delete_doc():
+    pass
 
 
 run(host='localhost', port=8080)
