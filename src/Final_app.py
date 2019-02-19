@@ -18,6 +18,7 @@ def index(name):
     return template('<b>Hello {{name}}</b>!', name=name)
 
 
+# Helper function
 def insert_doc(document):
     try:
         result = collection.save(document)
@@ -26,6 +27,7 @@ def insert_doc(document):
     return result
 
 
+# Create routing for REST API
 @route('/create', method='POST')
 def put_doc():
     data = request.body.readline()
@@ -42,8 +44,28 @@ def put_doc():
 
 
 # Read (Find one)
-@route('/Read', method='GET')
-def read_doc():
+# Takes two arguments, numerical low and high values
+# returns count of docs between those values
+@route('/Avg', method='GET')
+def count_avg():
+    pass
+
+
+# Read (Find one)
+# Input string = industry
+# returns list of ticker symbols to match that industry
+@route('/Read_Sector', method='GET')
+def read_sector():
+    pass
+
+
+# Read (Find one)
+# Aggregation, multiple pipeline stages
+# Input string = sector
+# Returns "Total outstanding shares" grouped by Industry
+# Create simple main application to call the function
+@route('/Count_shares', method='GET')
+def count_shares():
     pass
 
 
