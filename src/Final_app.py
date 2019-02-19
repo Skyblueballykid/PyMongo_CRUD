@@ -18,6 +18,7 @@ def index(name):
     return template('<b>Hello {{name}}</b>!', name=name)
 
 
+# Helper function
 def insert_doc(document):
     try:
         result = collection.save(document)
@@ -26,6 +27,7 @@ def insert_doc(document):
     return result
 
 
+# Create routing for REST API
 @route('/create', method='POST')
 def put_doc():
     data = request.body.readline()
