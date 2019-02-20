@@ -1,6 +1,7 @@
 from bottle import route, run, template, request, abort, response
 from pymongo import MongoClient
 from bson import json_util
+from bson.son import SON
 import json
 from flask import jsonify
 import pprint
@@ -241,9 +242,20 @@ def count_shares():
 
 
 # Get all stocks
-@route('/stocks', method= 'GET')
+@route('/stocks', method='GET')
 def get_all_stocks():
-    return json.dumps(collection.find().limit(10))
+    output = list()
+    stocks = collection.find()
+    count = collection.find().count()
+    for s in stocks.limit(count):
+            try:
+                tick = s.get("Ticker", "")
+                company = s.get("Company", "")
+                output.append({"Ticker": tick, 'Company': company})
+                print(len(output))
+            except ValueError as e:
+                print(e)
+    return json.dumps(output, default=json_util.default)
 
 
 # stockReport
