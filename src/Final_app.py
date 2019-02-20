@@ -48,10 +48,15 @@ MAIN METHOD FUNCTIONS
 '''
 
 
-# Find a stock by name
-@route('/getStock', method='GET')
+# Find a stock by Ticker
 def get_stock():
-    pass
+    try:
+        input_name = str(input("Enter the ticker to look up: "))
+        read_one = collection.find_one({"Ticker": input_name})
+        print(read_one)
+
+    except Exception as e:
+        print("400", str(e), False)
 
 
 # Read (Find one)
@@ -98,7 +103,30 @@ You will also need to create a simple main application to call your function.
 # Update a stock
 @route('/updateStock', method='PUT')
 def update_doc():
-    pass
+    try:
+        update_id = request.json["id"]
+
+        result = request.json["result"]
+
+        collection.update_one(
+
+            {"id": update_id},
+            {
+                "$set": {
+                    "result": result
+                }
+            }
+        )
+
+        return_result = collection.find_one({'id': update_id})
+
+        output = {"result": return_result['result']}
+
+        return jsonify({'result': output})
+
+    except Exception as e:
+        print("400", str(e), False)
+
 
 
 '''
@@ -114,6 +142,50 @@ You will also need to create a simple application scaffold for testing your func
 @route('/deleteStock', method='DELETE')
 def delete_doc():
     pass
+
+'''
+# Find a stock by name
+@route('/getStock', method='GET')
+def get_stock():
+    data = request.body.readline()
+    if not data:
+        abort(400, 'No data received')
+    entity = json.loads(data)
+    if 'Ticker' not in entity:
+        abort(400, 'No Ticker specified')
+    try:
+        return_result = collection.find_one({'Ticker': "AAIT"})
+        output = {"result": return_result['result']}
+        return jsonify({'result': output})
+
+    except Exception as e:
+        abort(400, str(e))
+        
+# Read (Find one)
+# Takes two arguments, numerical low and high values
+# returns count of docs between those values
+@route('/Avg', method='GET')
+def count_avg():
+    pass
+
+
+# Read (Find one)
+# Input string = industry
+# returns list of ticker symbols to match that industry
+@route('/Read_Sector', method='GET')
+def read_sector():
+    pass
+
+
+# Read (Find one)
+# Aggregation, multiple pipeline stages
+# Input string = sector
+# Returns "Total outstanding shares" grouped by Industry
+# Create simple main application to call the function
+@route('/Count_shares', method='GET')
+def count_shares():
+    pass
+'''
 
 
 # stockReport
@@ -143,7 +215,7 @@ def main():
             '\n2 to find the count of documents between a 50-Day Simple Moving Average Range'
             '\n3 to find the list of ticker symbols that match a specified industry'
             '\n4 Enter a sector name to find the total outstanding shares in an industry'
-            '\n5 to run the bottle app and access the REST API '
+            '\n5 to run the app and access the REST API '
             '\n0 to quit\n\n'))
 
         if selection == '1':
