@@ -1,4 +1,4 @@
-from bottle import route, run, template, request, abort
+from bottle import route, run, template, request, abort, response
 from pymongo import MongoClient
 import json
 from flask import jsonify
@@ -14,6 +14,7 @@ collection = db['stocks']
 
 # Set the indenting for the PrettyPrinter
 pp = pprint.PrettyPrinter(indent=4)
+
 
 # returns hello + the name (entered after the slash in the URL)
 @route('/hello/<name>')
@@ -238,22 +239,32 @@ def count_shares():
 '''
 
 
+# Get all stocks
+@route('/stocks', method= 'GET')
+def get_all_stocks():
+    return json.dumps(collection.find().limit(10))
+
+
 # stockReport
-@route('/stockReport/<Ticker>', method='POST')
-def stock_report():
-    ticker = request.json["Ticker"]
-    pass
+@route('/stockReport/<Ticker>', method='GET')
+def stock_report(Ticker):
+    try:
+        returned_ticker = collection.find_one({'Ticker': Ticker})
+        pp.pprint(returned_ticker)
+
+    except Exception as e:
+        print("400", str(e), False)
 
 
 # industryReport
 @route('/industryReport/<Industry>', method='GET')
-def industry_report():
+def industry_report(industry):
     pass
 
 
 # portfolio
 @route('/portfolio/<Company>', method='GET')
-def portfolio():
+def portfolio(company):
     pass
 
 
