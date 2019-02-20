@@ -37,6 +37,7 @@ def get_stock_main():
         print("400", str(e), False)
 
 
+# Update volume of a stock
 def update_doc_main():
     try:
         input_name = str(input("Enter the ticker to look up: "))
@@ -61,6 +62,7 @@ def update_doc_main():
         print("400", str(e), False)
 
 
+# delete a stock by Ticker
 def delete_doc_main():
     try:
         delete_ticker = input("Enter the ticker of the stock to delete: ")
@@ -97,7 +99,13 @@ def count_avg_main():
 # Input string = industry
 # returns list of ticker symbols to match that industry
 def read_sector_main():
-    pass
+    industry = input("Enter the name of the industry to look up: ")
+    stocks = collection.find({"Industry": industry})
+    count = 1
+    for s in stocks:
+        tick = s.get("Ticker", "")
+        print("Ticker",count, tick)
+        count += 1
 
 
 # Read (Find one)
@@ -106,12 +114,14 @@ def read_sector_main():
 # Returns "Total outstanding shares" grouped by Industry
 # Create simple main application to call the function
 def count_shares_main():
+    sector = input("Enter the name of the Sector to look up: ")
     pass
 
 
 '''
 END MAIN METHOD FUNCTIONS
 '''
+
 
 '''
 API FUNCTIONS
