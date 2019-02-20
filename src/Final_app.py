@@ -18,12 +18,6 @@ collection = db['stocks']
 pp = pprint.PrettyPrinter(indent=4)
 
 
-# returns hello + the name (entered after the slash in the URL)
-@route('/hello/<name>')
-def index(name):
-    return template('<b>Hello {{name}}</b>!', name=name)
-
-
 '''
 MAIN METHOD FUNCTIONS
 '''
@@ -43,6 +37,7 @@ def get_stock_main():
         print("400", str(e), False)
 
 
+# Update volume of a stock
 def update_doc_main():
     try:
         input_name = str(input("Enter the ticker to look up: "))
@@ -67,6 +62,7 @@ def update_doc_main():
         print("400", str(e), False)
 
 
+# delete a stock by Ticker
 def delete_doc_main():
     try:
         delete_ticker = input("Enter the ticker of the stock to delete: ")
@@ -87,11 +83,17 @@ def delete_doc_main():
 # returns count of docs between those values
 def count_avg_main():
     try:
-        input_num1 = float(input("Enter the low number: "))
-        input_num2 = float(input("Enter the high number: "))
-        if input_num1 > 0.000 and input_num2 < 2.6714 and input_num2 > input_num1:
-                print("Low value:", input_num1, ",", "High value: ", input_num2)
-
+        low_value = float(input("Enter the low number: "))
+        high_value = float(input("Enter the high number: "))
+        count = 1
+        if low_value > 0.000 and high_value < 2.6714 and high_value > low_value:
+                print("Low value:", low_value, ",", "High value: ", high_value)
+                stocks = collection.find({"50-Day Simple Moving Average": {'$gte': low_value, '$lte': high_value}})
+                for s in stocks:
+                    tick = s.get("Ticker", "")
+                    print("Ticker", count, tick)
+                    count += 1
+                print("Count", count)
         else:
             print("Input range invalid")
 
@@ -103,7 +105,13 @@ def count_avg_main():
 # Input string = industry
 # returns list of ticker symbols to match that industry
 def read_sector_main():
-    pass
+    industry = input("Enter the name of the industry to look up: ")
+    stocks = collection.find({"Industry": industry})
+    count = 1
+    for s in stocks:
+        tick = s.get("Ticker", "")
+        print("Ticker", count, tick)
+        count += 1
 
 
 # Read (Find one)
@@ -112,6 +120,7 @@ def read_sector_main():
 # Returns "Total outstanding shares" grouped by Industry
 # Create simple main application to call the function
 def count_shares_main():
+    sector = input("Enter the name of the Sector to look up: ")
     pass
 
 
@@ -119,14 +128,9 @@ def count_shares_main():
 END MAIN METHOD FUNCTIONS
 '''
 
+
 '''
-Update existing documents using appropriate MongoDB statements. 
-Specifically, create a function or method in Python or Java that 
-will update the document “Volume” key-value pair identified by the string input stock ticker symbol 
-“Ticker” and numerical input “Volume” value of your choice greater than zero. 
-The function or method will update the document “Volume” key-value pair identified
-by the given ticker symbol and a new “Volume” value of your choice greater than zero. 
-You will also need to create a simple main application to call your function. 
+API FUNCTIONS
 '''
 
 
@@ -182,63 +186,10 @@ def update_doc():
         print("400", str(e), False)
 
 
-'''
-Delete existing documents using appropriate MongoDB statements. 
-Specifically, create a function or method in Python or Java that will take as input a stock ticker symbol “Ticker.” 
-The function or method will remove the document identified by the given ticker symbol. 
-For example, use the ticker symbol “BRLI.” 
-You will also need to create a simple application scaffold for testing your function or method. 
-'''
-
-
 # Delete a stock
 @route('/deleteStock', method='DELETE')
 def delete_doc():
     pass
-
-'''
-# Find a stock by name
-@route('/getStock', method='GET')
-def get_stock():
-    data = request.body.readline()
-    if not data:
-        abort(400, 'No data received')
-    entity = json.loads(data)
-    if 'Ticker' not in entity:
-        abort(400, 'No Ticker specified')
-    try:
-        return_result = collection.find_one({'Ticker': "AAIT"})
-        output = {"result": return_result['result']}
-        return jsonify({'result': output})
-
-    except Exception as e:
-        abort(400, str(e))
-        
-# Read (Find one)
-# Takes two arguments, numerical low and high values
-# returns count of docs between those values
-@route('/Avg', method='GET')
-def count_avg():
-    pass
-
-
-# Read (Find one)
-# Input string = industry
-# returns list of ticker symbols to match that industry
-@route('/Read_Sector', method='GET')
-def read_sector():
-    pass
-
-
-# Read (Find one)
-# Aggregation, multiple pipeline stages
-# Input string = sector
-# Returns "Total outstanding shares" grouped by Industry
-# Create simple main application to call the function
-@route('/Count_shares', method='GET')
-def count_shares():
-    pass
-'''
 
 
 # Get all stocks
@@ -249,12 +200,14 @@ def get_all_stocks():
     count = collection.find().count()
     for s in stocks.limit(count):
             try:
+                # Error handling in case the key doesn't exist
                 tick = s.get("Ticker", "")
                 company = s.get("Company", "")
                 output.append({"Ticker": tick, 'Company': company})
-                print(len(output))
             except ValueError as e:
                 print(e)
+    # print the total number of stocks in the collection
+    print(len(output))
     return json.dumps(output, default=json_util.default)
 
 
