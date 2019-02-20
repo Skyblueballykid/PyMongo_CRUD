@@ -62,15 +62,23 @@ def get_stock():
 # Read (Find one)
 # Takes two arguments, numerical low and high values
 # returns count of docs between those values
-@route('/Avg', method='GET')
 def count_avg():
-    pass
+    try:
+        input_num1 = float(input("Enter the low number: "))
+        input_num2 = float(input("Enter the high number: "))
+        if input_num1 > 0.000 and input_num2 < 2.6714 and input_num2 > input_num1:
+                print("Low value:", input_num1, "," , "High value: ", input_num2)
+
+        else:
+            print("Input range invalid")
+
+    except Exception as e:
+        print("400", str(e), False)
 
 
 # Read (Find one)
 # Input string = industry
 # returns list of ticker symbols to match that industry
-@route('/Read_Sector', method='GET')
 def read_sector():
     pass
 
@@ -80,7 +88,6 @@ def read_sector():
 # Input string = sector
 # Returns "Total outstanding shares" grouped by Industry
 # Create simple main application to call the function
-@route('/Count_shares', method='GET')
 def count_shares():
     pass
 
