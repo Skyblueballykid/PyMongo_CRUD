@@ -53,7 +53,10 @@ def get_stock():
     try:
         input_name = str(input("Enter the ticker to look up: "))
         read_one = collection.find_one({"Ticker": input_name})
-        print(read_one)
+        if read_one['Ticker'] is None:
+            raise ValueError
+        else:
+            print(read_one)
 
     except Exception as e:
         print("400", str(e), False)
@@ -67,7 +70,7 @@ def count_avg():
         input_num1 = float(input("Enter the low number: "))
         input_num2 = float(input("Enter the high number: "))
         if input_num1 > 0.000 and input_num2 < 2.6714 and input_num2 > input_num1:
-                print("Low value:", input_num1, "," , "High value: ", input_num2)
+                print("Low value:", input_num1, ",", "High value: ", input_num2)
 
         else:
             print("Input range invalid")
@@ -111,23 +114,22 @@ You will also need to create a simple main application to call your function.
 @route('/updateStock', method='PUT')
 def update_doc():
     try:
-        update_id = request.json["id"]
+        update_ticker = request.json["Ticker"]
+        update_volume = request.json["Volume"]
 
-        result = request.json["result"]
-
-        collection.update_one(
-
-            {"id": update_id},
-            {
-                "$set": {
-                    "result": result
+        if int(update_volume) > 0:
+            collection.update_one(
+                {"Ticker": update_ticker},
+                {
+                    "$set": {
+                        "Volume": update_volume
+                    }
                 }
-            }
-        )
+            )
 
-        return_result = collection.find_one({'id': update_id})
+        return_result = collection.find_one({'Ticker': update_ticker})
 
-        output = {"result": return_result['result']}
+        output = {"result": return_result}
 
         return jsonify({'result': output})
 
@@ -196,19 +198,21 @@ def count_shares():
 
 
 # stockReport
-@route('stockReport', method='POST')
+@route('/stockReport/<Ticker>', method='POST')
 def stock_report():
+    ticker = request.json["Ticker"]
+
     pass
 
 
 # industryReport
-@route('industryReport/<Industry>', method='GET')
+@route('/industryReport/<Industry>', method='GET')
 def industry_report():
     pass
 
 
 # portfolio
-@route('portfolio/<Company>', method='GET')
+@route('/portfolio/<Company>', method='GET')
 def portfolio():
     pass
 
