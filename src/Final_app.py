@@ -247,10 +247,12 @@ def get_all_stocks():
     output = list()
     stocks = collection.find()
     count = collection.find().count()
-    for s in stocks.limit(count-1):
-        if s['Company'] is not None:
+    for s in stocks.limit(count):
             try:
-                output.append({"Ticker": s['Ticker'], 'Company': s['Company']})
+                tick = s.get("Ticker", "")
+                company = s.get("Company", "")
+                output.append({"Ticker": tick, 'Company': company})
+                print(len(output))
             except ValueError as e:
                 print(e)
     return json.dumps(output, default=json_util.default)
