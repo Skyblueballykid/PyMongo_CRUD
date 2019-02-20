@@ -83,11 +83,17 @@ def delete_doc_main():
 # returns count of docs between those values
 def count_avg_main():
     try:
-        input_num1 = float(input("Enter the low number: "))
-        input_num2 = float(input("Enter the high number: "))
-        if input_num1 > 0.000 and input_num2 < 2.6714 and input_num2 > input_num1:
-                print("Low value:", input_num1, ",", "High value: ", input_num2)
-
+        low_value = float(input("Enter the low number: "))
+        high_value = float(input("Enter the high number: "))
+        count = 1
+        if low_value > 0.000 and high_value < 2.6714 and high_value > low_value:
+                print("Low value:", low_value, ",", "High value: ", high_value)
+                stocks = collection.find({"50-Day Simple Moving Average": {'$gte': low_value, '$lte': high_value}})
+                for s in stocks:
+                    tick = s.get("Ticker", "")
+                    print("Ticker", count, tick)
+                    count += 1
+                print("Count", count)
         else:
             print("Input range invalid")
 
@@ -104,7 +110,7 @@ def read_sector_main():
     count = 1
     for s in stocks:
         tick = s.get("Ticker", "")
-        print("Ticker",count, tick)
+        print("Ticker", count, tick)
         count += 1
 
 
