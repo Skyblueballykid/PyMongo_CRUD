@@ -1,5 +1,6 @@
 from bottle import route, run, template, request, abort, response
 from pymongo import MongoClient
+from bson import json_util
 import json
 from flask import jsonify
 import pprint
@@ -251,7 +252,7 @@ def stock_report(Ticker):
     try:
         returned_ticker = collection.find_one({'Ticker': Ticker})
         pp.pprint(returned_ticker)
-
+        return json.dumps(returned_ticker, default=json_util.default)
     except Exception as e:
         print("400", str(e), False)
 
