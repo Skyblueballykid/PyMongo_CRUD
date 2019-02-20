@@ -2,6 +2,7 @@ from bottle import route, run, template, request, abort
 from pymongo import MongoClient
 import json
 from flask import jsonify
+import pprint
 
 
 # Establish the connection to the MongoClient
@@ -11,11 +12,119 @@ db = connection['market']
 # Set to inspections collection
 collection = db['stocks']
 
+# Set the indenting for the PrettyPrinter
+pp = pprint.PrettyPrinter(indent=4)
 
 # returns hello + the name (entered after the slash in the URL)
 @route('/hello/<name>')
 def index(name):
     return template('<b>Hello {{name}}</b>!', name=name)
+
+
+'''
+MAIN METHOD FUNCTIONS
+'''
+
+
+# Find a stock by Ticker
+def get_stock_main():
+    try:
+        input_name = str(input("Enter the ticker to look up: "))
+        read_one = collection.find_one({"Ticker": input_name})
+        if read_one['Ticker'] is None:
+            raise ValueError
+        else:
+            pp.pprint(read_one)
+
+    except Exception as e:
+        print("400", str(e), False)
+
+
+def update_doc_main():
+    try:
+        input_name = str(input("Enter the ticker to look up: "))
+        update_volume = int(input("Enter the new volume: "))
+
+        if int(update_volume) > 0:
+            collection.update_one(
+                {"Ticker": input_name},
+                {
+                    "$set": {
+                        "Volume": update_volume
+                    }
+                }
+            )
+            read_one = collection.find_one({"Ticker": input_name})
+            pp.pprint(read_one)
+
+        else:
+            print("Volume is less than 1, try again. ")
+
+    except Exception as e:
+        print("400", str(e), False)
+
+
+def delete_doc_main():
+    try:
+        delete_ticker = input("Enter the ticker of the stock to delete: ")
+
+        deletion = {
+            "Ticker": delete_ticker
+        }
+        collection.delete_one(deletion)
+
+        print("Document Deleted:", True)
+
+    except Exception as e:
+        print("400", str(e), False)
+
+
+# Read (Find one)
+# Takes two arguments, numerical low and high values
+# returns count of docs between those values
+def count_avg_main():
+    try:
+        input_num1 = float(input("Enter the low number: "))
+        input_num2 = float(input("Enter the high number: "))
+        if input_num1 > 0.000 and input_num2 < 2.6714 and input_num2 > input_num1:
+                print("Low value:", input_num1, ",", "High value: ", input_num2)
+
+        else:
+            print("Input range invalid")
+
+    except Exception as e:
+        print("400", str(e), False)
+
+
+# Read (Find one)
+# Input string = industry
+# returns list of ticker symbols to match that industry
+def read_sector_main():
+    pass
+
+
+# Read (Find one)
+# Aggregation, multiple pipeline stages
+# Input string = sector
+# Returns "Total outstanding shares" grouped by Industry
+# Create simple main application to call the function
+def count_shares_main():
+    pass
+
+
+'''
+END MAIN METHOD FUNCTIONS
+'''
+
+'''
+Update existing documents using appropriate MongoDB statements. 
+Specifically, create a function or method in Python or Java that 
+will update the document “Volume” key-value pair identified by the string input stock ticker symbol 
+“Ticker” and numerical input “Volume” value of your choice greater than zero. 
+The function or method will update the document “Volume” key-value pair identified
+by the given ticker symbol and a new “Volume” value of your choice greater than zero. 
+You will also need to create a simple main application to call your function. 
+'''
 
 
 # Helper function
@@ -43,112 +152,6 @@ def put_doc():
         abort(400, str(e))
 
 
-'''
-MAIN METHOD FUNCTIONS
-'''
-
-
-# Find a stock by Ticker
-def get_stock():
-    try:
-        input_name = str(input("Enter the ticker to look up: "))
-        read_one = collection.find_one({"Ticker": input_name})
-        if read_one['Ticker'] is None:
-            raise ValueError
-        else:
-            print(read_one)
-
-    except Exception as e:
-        print("400", str(e), False)
-
-
-def update_doc_main():
-    try:
-        input_name = str(input("Enter the ticker to look up: "))
-        update_volume = int(input("Enter the new volume: "))
-
-        if int(update_volume) > 0:
-            collection.update_one(
-                {"Ticker": input_name},
-                {
-                    "$set": {
-                        "Volume": update_volume
-                    }
-                }
-            )
-            read_one = collection.find_one({"Ticker": input_name})
-            print(read_one)
-
-        else:
-            print("Volume is less than 1, try again. ")
-
-    except Exception as e:
-        print("400", str(e), False)
-
-
-def delete_doc_main():
-    try:
-        delete_ticker = input("Enter the ticker of the stock to delete: ")
-
-        deletion = {
-            "Ticker": delete_ticker
-        }
-        collection.delete_one(deletion)
-
-        print("Document Deleted:", True)
-
-    except Exception as e:
-        print("400", str(e), False)
-
-
-# Read (Find one)
-# Takes two arguments, numerical low and high values
-# returns count of docs between those values
-def count_avg():
-    try:
-        input_num1 = float(input("Enter the low number: "))
-        input_num2 = float(input("Enter the high number: "))
-        if input_num1 > 0.000 and input_num2 < 2.6714 and input_num2 > input_num1:
-                print("Low value:", input_num1, ",", "High value: ", input_num2)
-
-        else:
-            print("Input range invalid")
-
-    except Exception as e:
-        print("400", str(e), False)
-
-
-# Read (Find one)
-# Input string = industry
-# returns list of ticker symbols to match that industry
-def read_sector():
-    pass
-
-
-# Read (Find one)
-# Aggregation, multiple pipeline stages
-# Input string = sector
-# Returns "Total outstanding shares" grouped by Industry
-# Create simple main application to call the function
-def count_shares():
-    pass
-
-
-'''
-END MAIN METHOD FUNCTIONS
-'''
-
-'''
-Update existing documents using appropriate MongoDB statements. 
-Specifically, create a function or method in Python or Java that 
-will update the document “Volume” key-value pair identified by the string input stock ticker symbol 
-“Ticker” and numerical input “Volume” value of your choice greater than zero. 
-The function or method will update the document “Volume” key-value pair identified
-by the given ticker symbol and a new “Volume” value of your choice greater than zero. 
-You will also need to create a simple main application to call your function. 
-'''
-
-
 # Update a stock using the API
 @route('/updateStock', method='PUT')
 def update_doc():
@@ -174,7 +177,6 @@ def update_doc():
 
     except Exception as e:
         print("400", str(e), False)
-
 
 
 '''
@@ -271,17 +273,17 @@ def main():
             '\n0 to quit\n\n'))
 
         if selection == '1':
-            get_stock()
+            get_stock_main()
         elif selection == '2':
             update_doc_main()
         elif selection == '3':
             delete_doc_main()
         elif selection == '4':
-            count_avg()
+            count_avg_main()
         elif selection == '5':
-            read_sector()
+            read_sector_main()
         elif selection == '6':
-            count_shares()
+            count_shares_main()
         elif selection == '7':
             run(host='localhost', port=8080)
         elif selection == '0':
