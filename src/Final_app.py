@@ -62,6 +62,45 @@ def get_stock():
         print("400", str(e), False)
 
 
+def update_doc_main():
+    try:
+        input_name = str(input("Enter the ticker to look up: "))
+        update_volume = int(input("Enter the new volume: "))
+
+        if int(update_volume) > 0:
+            collection.update_one(
+                {"Ticker": input_name},
+                {
+                    "$set": {
+                        "Volume": update_volume
+                    }
+                }
+            )
+            read_one = collection.find_one({"Ticker": input_name})
+            print(read_one)
+
+        else:
+            print("Volume is less than 1, try again. ")
+
+    except Exception as e:
+        print("400", str(e), False)
+
+
+def delete_doc_main():
+    try:
+        delete_ticker = input("Enter the ticker of the stock to delete: ")
+
+        deletion = {
+            "Ticker": delete_ticker
+        }
+        collection.delete_one(deletion)
+
+        print("Document Deleted:", True)
+
+    except Exception as e:
+        print("400", str(e), False)
+
+
 # Read (Find one)
 # Takes two arguments, numerical low and high values
 # returns count of docs between those values
@@ -110,7 +149,7 @@ You will also need to create a simple main application to call your function.
 '''
 
 
-# Update a stock
+# Update a stock using the API
 @route('/updateStock', method='PUT')
 def update_doc():
     try:
@@ -201,7 +240,6 @@ def count_shares():
 @route('/stockReport/<Ticker>', method='POST')
 def stock_report():
     ticker = request.json["Ticker"]
-
     pass
 
 
@@ -223,21 +261,28 @@ def main():
         selection = str(input(
             'Select: '
             '\n1 to find a document by ticker symbol'
-            '\n2 to find the count of documents between a 50-Day Simple Moving Average Range'
-            '\n3 to find the list of ticker symbols that match a specified industry'
-            '\n4 Enter a sector name to find the total outstanding shares in an industry'
-            '\n5 to run the app and access the REST API '
+            '\n2 to update the trading volume'
+            '\n3 to delete a stock from the database'
+            '\n4 to find the count of documents between a 50-Day Simple Moving Average Range'
+            '\n5 to find the list of ticker symbols that match a specified industry'
+            '\n6 Enter a sector name to find the total outstanding shares in an industry'
+            '\n7 to run the app and access the REST API '
+            
             '\n0 to quit\n\n'))
 
         if selection == '1':
             get_stock()
         elif selection == '2':
-            count_avg()
+            update_doc_main()
         elif selection == '3':
-            read_sector()
+            delete_doc_main()
         elif selection == '4':
-            count_shares()
+            count_avg()
         elif selection == '5':
+            read_sector()
+        elif selection == '6':
+            count_shares()
+        elif selection == '7':
             run(host='localhost', port=8080)
         elif selection == '0':
             quit()
