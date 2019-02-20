@@ -199,6 +199,7 @@ curl http://localhost:8080/delete?id="10011-2017-TEST"
 
 '''
 
+
 @app2.route("/delete", methods=['DELETE'])
 def delete():
 
