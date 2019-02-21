@@ -197,9 +197,6 @@ def update_doc():
 @route('/deleteStock/<Ticker>', method='GET')
 def delete_doc(Ticker):
     try:
-        deletion = {
-            "Ticker": Ticker
-        }
         collection.delete_one({"Ticker": str(Ticker)})
 
         print("Document Deleted:", True)
@@ -239,9 +236,29 @@ def get_stock(Ticker):
 
 
 # stockReport
-@route('/stockReport', method='GET')
+@route('/stockReport', method='POST')
 def stock_report():
-    pass
+    try:
+        output = list()
+
+        data = request.body.read()
+        if not data:
+            abort(400, 'No data received')
+        decoded_data = data.decode('ascii')
+        decoded_data.split(',')
+        print(type(decoded_data))
+        print(decoded_data)
+        # convert the list of tickers to a string because I had difficulty iterating over the decoded list
+        data_string = list("".join(str(x) for x in decoded_data))
+        print(data_string)
+        for d in data_string:
+            stock = collection.find({"Ticker": {"$in": decoded_data}})
+            for s in stock:
+                output.append(s)
+        pp.pprint(output)
+        return json.dumps(output, default=json_util.default)
+    except Exception as e:
+        print("400", str(e), False)
 
 
 # industryReport
