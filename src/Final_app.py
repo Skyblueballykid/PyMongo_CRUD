@@ -227,9 +227,9 @@ def get_all_stocks():
     return json.dumps(output, default=json_util.default)
 
 
-# stockReport
-@route('/stockReport/<Ticker>', method='GET')
-def stock_report(Ticker):
+# getStock
+@route('/getStock/<Ticker>', method='GET')
+def get_stock(Ticker):
     try:
         returned_ticker = collection.find_one({'Ticker': Ticker})
         pp.pprint(returned_ticker)
@@ -237,6 +237,11 @@ def stock_report(Ticker):
     except Exception as e:
         print("400", str(e), False)
 
+
+# stockReport
+@route('/stockReport', method='GET')
+def stock_report():
+    pass
 
 # industryReport
 @route('/industryReport/<Industry>', method='GET')
