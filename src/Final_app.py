@@ -243,10 +243,25 @@ def get_stock(Ticker):
 def stock_report():
     pass
 
+
 # industryReport
-@route('/industryReport/<Industry>', method='GET')
+@route('/industryReport/<industry>', method='GET')
 def industry_report(industry):
-    pass
+    try:
+        output = list()
+
+        # Mongo cursor object, which is consumed after cycling through it once
+        stocks = db.stocks.find({"Industry": str(industry)})
+
+        # Need to append each dict in the cursor to a list of dicts to keep it
+        for s in stocks.limit(5):
+            output.append(s)
+
+        pp.pprint(output)
+        return json.dumps(output, default=json_util.default)
+
+    except Exception as e:
+        print("400", str(e), False)
 
 
 # portfolio
