@@ -120,8 +120,14 @@ def read_sector_main():
 # Returns "Total outstanding shares" grouped by Industry
 # Create simple main application to call the function
 def count_shares_main():
-    sector = input("Enter the name of the Sector to look up: ")
-    pass
+    sector = str(input("Enter the name of the Sector to look up: "))
+    with connection:
+        pipe = [
+            {"$match": {"Sector": sector}},
+            {"$group": {"_id": "$Industry", "Total Shares": {"$sum": "$Shares Outstanding"}}}
+        ]
+        agg = list(db.stocks.aggregate(pipe))
+        pp.pprint(agg)
 
 
 '''
