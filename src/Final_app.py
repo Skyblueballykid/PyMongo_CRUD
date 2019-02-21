@@ -193,9 +193,19 @@ def update_doc():
 
 
 # Delete a stock
-@route('/deleteStock', method='DELETE')
-def delete_doc():
-    pass
+# Needs to be GET method, not DELETE
+@route('/deleteStock/<Ticker>', method='GET')
+def delete_doc(Ticker):
+    try:
+        deletion = {
+            "Ticker": Ticker
+        }
+        collection.delete_one({"Ticker": str(Ticker)})
+
+        print("Document Deleted:", True)
+
+    except Exception as e:
+        print("400", str(e), False)
 
 
 # Get all stocks
