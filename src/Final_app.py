@@ -1,7 +1,6 @@
-from bottle import  route, run, template, request, abort, response
+from bottle import route, run, request, abort
 from pymongo import MongoClient
 from bson import json_util
-from bson.son import SON
 import json
 from flask import jsonify
 import pprint
@@ -21,6 +20,7 @@ pp = pprint.PrettyPrinter(indent=4)
 '''
 MAIN METHOD FUNCTIONS
 '''
+
 
 
 # Find a stock by Ticker
