@@ -244,15 +244,12 @@ def stock_report():
         data = request.body.read()
         if not data:
             abort(400, 'No data received')
+        # decode the binary data into string
         decoded_data = data.decode('ascii')
-        decoded_data.split(',')
-        print(type(decoded_data))
-        print(decoded_data)
-        # convert the list of tickers to a string because I had difficulty iterating over the decoded list
-        data_string = list("".join(str(x) for x in decoded_data))
-        print(data_string)
-        for d in data_string:
-            stock = collection.find({"Ticker": {"$in": decoded_data}})
+        # split the string into a list to pass into the query
+        data_list = list(decoded_data.split(' '))
+        for _ in data_list:
+            stock = collection.find({"Ticker": {"$in": data_list}})
             for s in stock:
                 output.append(s)
         pp.pprint(output)
