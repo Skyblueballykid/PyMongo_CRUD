@@ -278,12 +278,6 @@ def industry_report(industry):
         print("400", str(e), False)
 
 
-# portfolio
-@route('/portfolio/<Company>', method='GET')
-def portfolio(company):
-    pass
-
-
 # Create the selection menu
 def main():
     while True:
