@@ -1,3 +1,4 @@
+# MongoDB CRUD application
 from pymongo import MongoClient
 # TODO: Add prettify module to pretty print json
 
